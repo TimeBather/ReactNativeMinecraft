@@ -15,6 +15,8 @@ interface MinecraftNativeGuiModule{
 
 interface MinecraftNativeElement {
     setElementContent(content:string);
+    addChild(element:MinecraftNativeElement);
+    removeChild(element:MinecraftNativeElement);
 }
 
 declare global{

@@ -46,11 +46,11 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
     },
 
     appendInitialChild(parentInstance: MinecraftNativeElement, child: MinecraftNativeElement) {
-
+        parentInstance.addChild(child);
     },
 
     removeChild(parentInstance: MinecraftNativeElement, child: MinecraftNativeElement) {
-
+        parentInstance.removeChild(child);
     },
 
     commitTextUpdate(element: MinecraftNativeElement, oldText: string, newText: string) {
@@ -78,7 +78,6 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
     finalizeInitialChildren(){
         return false;
     },
-
     supportsMutation: true
 };
 
