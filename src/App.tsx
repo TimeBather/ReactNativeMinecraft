@@ -15,7 +15,18 @@ function App(){
         return ()=>clearInterval(interval);
     });
     return <>
-        Ticks:{ticks}
+        <View style={{
+            width:'100',
+            height:'100',
+            backgroundImage:'resource("kasuga_lib:textures/gui/pixel.png")',
+            backgroundUV:'0 0 32 32'
+        }}></View>
+        <View style={{
+            width:'100',
+            height:'100',
+            backgroundImage:'resource("kasuga_lib:textures/gui/pixel.png")',
+            backgroundUV:'0 0 16 16'
+        }}></View>
     </>
 }
 
