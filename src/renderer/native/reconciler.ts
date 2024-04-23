@@ -1,7 +1,18 @@
 import ReactReconciler, {HostConfig} from "react-reconciler";
 import {MinecraftNative, MinecraftNativeElement, MinecraftNativeGuiModule} from "./native";
+import _ from "lodash";
 
 let currentContainer;
+
+function commitMouseEvents(element: MinecraftNativeElement, props: Record<string, any>){
+    Object.keys(props).forEach((propName)=>{
+        console.info(" - "+propName+" = "+ props[propName].toString())
+        switch (propName){
+            case 'onclick':
+                element.listenMouse(propName.substring(2),function (ctx){return props[propName](ctx)});
+        }
+    })
+}
 
 const MinecraftNativeReconcilerConfig: Partial<HostConfig<
         any,
@@ -30,7 +41,21 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
         // containerInfo.renderAll();
     },
     createInstance(type: string, props: Record<string, any>, rootContainer: MinecraftNativeGuiModule, hostContext: MinecraftNative, internalHandle: ReactReconciler.OpaqueHandle){
-        return rootContainer.createElement(type, JSON.stringify(props));
+        console.info("Creating instance of " + type + ",props:",props)
+        let serializedProp : Record<string, any> = {};
+        Object.keys(props).forEach(propName => {
+            switch (propName){
+                case 'children': break;
+                case 'onclick': break;
+                default:
+                    console.info(" - Copy prop " + propName + ", value = " , serializedProp , " to Native Host Serializer")
+                    serializedProp[propName] = props[propName];
+            }
+        });
+        console.info("Commit props:" ,JSON.stringify(serializedProp))
+        let element = rootContainer.createElement(type, JSON.stringify(serializedProp));
+        commitMouseEvents(element,props);
+        return element;
     },
     createTextInstance(text: any, rootContainer: MinecraftNativeGuiModule, hostContext: any, internalHandle: any) {
         const element = rootContainer.createElement("text","{}");
@@ -64,11 +89,23 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
                  nextProps: Record<string, any>,
                  internalHandle: ReactReconciler.OpaqueHandle
     ) {
-
+        console.info("Update payload: "+JSON.stringify(updatePayload)+" for instance "+ type)
+        commitMouseEvents(instance,updatePayload);
     },
 
     prepareUpdate(instance: any, type: any, oldProps: any, newProps: any) {
-        return newProps
+        function diff(obj:Record<string, any>,base:Record<string, any>){
+           return  _.transform(obj,function(result,value,key){
+                if(key == "children")
+                    return;
+                if(!_.isEqual(value,base[key])){
+                    (result as any)[key] = (_.isObject(value) && _.isObject(base[key]) && (!_.isFunction(value)) ? diff(value,base[key]) : value)
+                }
+            })
+        }
+        let prePayload = diff(newProps,oldProps);
+        console.info("Update payload: "+JSON.stringify(prePayload)+" for instance "+ type)
+        return prePayload
     },
 
     detachDeletedInstance() {
