@@ -13,10 +13,17 @@ interface MinecraftNativeGuiModule{
     removeElement(element:MinecraftNativeElement);
 }
 
+interface MouseContent{
+    x:number,
+    y:number,
+    button:number
+}
+
 interface MinecraftNativeElement {
     setElementContent(content:string);
     addChild(element:MinecraftNativeElement);
     removeChild(element:MinecraftNativeElement);
+    listenMouse(eventName:string,callback:(mouseContext:MouseContent)=>boolean);
 }
 
 declare global{
