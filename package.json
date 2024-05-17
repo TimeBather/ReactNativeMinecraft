@@ -1,29 +1,12 @@
 {
-  "name": "react-native-minecraft",
+  "private": true,
+  "name": "react-native-minecraft-monorepo",
   "version": "0.1.0",
   "description": "Run react native in minecraft!",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
-  "rnpm": {
-    "haste": {
-      "providesModuleNodeModules": [
-        "react-native-minecraft"
-      ],
-      "platforms": [
-        "minecraft"
-      ]
-    }
-  },
-  "dependencies": {
-    "@types/lodash": "^4.17.0",
-    "@types/react-dom": "^18.2.25",
-    "@types/react-reconciler": "^0.28.8",
-    "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-reconciler": "^0.29.0"
-  },
-  "devDependencies": {
-    "esbuild": "^0.20.2"
-  }
+  "workspaces": [
+    "packages/*"
+  ],
+  "packageManager": "yarn@3.6.4"
 }

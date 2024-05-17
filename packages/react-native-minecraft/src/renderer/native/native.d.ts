@@ -5,6 +5,9 @@ interface MinecraftNative{
     requestInterval(callback:()=>void,interval:number);
     requestTimeout(callback:()=>void,timeout:number);
     clearSchedule(id:number);
+    isDebugging():boolean;
+    createWebSocket(url:string):MinecraftWebSocketHandler;
+    getModule(name:string):any;
 }
 
 interface MinecraftNativeGuiModule{
@@ -28,4 +31,5 @@ interface MinecraftNativeElement {
 
 declare global{
     const minecraft : MinecraftNative;
+    const Java:GraalJava;
 }

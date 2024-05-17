@@ -1,6 +1,7 @@
 import ReactReconciler, {HostConfig} from "react-reconciler";
 import {MinecraftNative, MinecraftNativeElement, MinecraftNativeGuiModule} from "./native";
 import _ from "lodash";
+import {connectDevtools} from "../../debugger";
 
 let currentContainer;
 
@@ -118,7 +119,9 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
     supportsMutation: true
 };
 
-const ReactReconcilerInstance = ReactReconciler(MinecraftNativeReconcilerConfig as any);
+export const ReactReconcilerInstance = ReactReconciler(MinecraftNativeReconcilerConfig as any);
+
+connectDevtools(ReactReconcilerInstance);
 
 export const MinecraftGui = {
     render(reactElement:any, container:MinecraftNativeGuiModule){
@@ -131,6 +134,6 @@ export const MinecraftGui = {
             '',
             ()=>{},
             null);
-        return ReactReconcilerInstance.updateContainer(reactElement,root);
+        ReactReconcilerInstance.updateContainer(reactElement,root);
     }
 }
