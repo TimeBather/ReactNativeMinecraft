@@ -112,7 +112,6 @@ static runApplication(appKey: string, appParameters: Object): Application {
     const isDevelopment = true;
     if (isDevelopment) {
         const params = { ...appParameters };
-        params.rootTag = "ABCDEF";
 
         console.log(
             `Running application "${appKey}" with appParams:\n`,

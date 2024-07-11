@@ -1,4 +1,4 @@
-if(minecraft.isDebugging()){
+if(__DEV__){
     const MetroHMRClient = require("metro-runtime/src/modules/HMRClient");
 
     const client = new MetroHMRClient('ws://127.0.0.1:8081/hot');

@@ -1,35 +1,37 @@
-import {minecraft} from "global";
+export interface DomNode{
+    addChildAt(index: number, child: DomNode);
+    addChild(child: DomNode)
+    removeChild(child: DomNode)
+    addEventListener(eventName: string, callback: Function);
+    removeEventListener(eventName: string, callback: Function)
+    dispatchEvent(eventName: string, event: any);
+    getAttribute(name:string):string;
+    setAttribute(name:string,value:string);
 
-interface MinecraftNative{
-    getGuiContainer(): MinecraftNativeGuiModule;
-    requestInterval(callback:()=>void,interval:number);
-    requestTimeout(callback:()=>void,timeout:number);
-    clearSchedule(id:number);
-    isDebugging():boolean;
-    createWebSocket(url:string):MinecraftWebSocketHandler;
-    getModule(name:string):any;
+    close(): void;
+
+    hasFeature(featureName: string): boolean
 }
 
-interface MinecraftNativeGuiModule{
-    createElement(type:string,props:string):MinecraftNativeElement;
-    appendElement(element:MinecraftNativeElement);
-    removeElement(element:MinecraftNativeElement);
+export interface GuiDomNode extends DomNode{}
+
+export interface GuiDomText extends DomNode{}
+
+export interface DomContext<N extends DomNode = DomNode ,R extends N = DomNode>{
+    getRootNode():R;
+    createNode(name:string):N;
+    createTextNode(name:string, content:string):N;
 }
 
-interface MouseContent{
-    x:number,
-    y:number,
-    button:number
+export interface GuiContext extends DomContext<GuiDomNode, GuiDomNode>{
+
 }
 
-interface MinecraftNativeElement {
-    setElementContent(content:string);
-    addChild(element:MinecraftNativeElement);
-    removeChild(element:MinecraftNativeElement);
-    listenMouse(eventName:string,callback:(mouseContext:MouseContent)=>boolean);
+export interface StyleSheet{
+    setStyle(name:string, value:string);
+    removeStyle(name:string);
 }
 
-declare global{
-    const minecraft : MinecraftNative;
-    const Java:GraalJava;
+export interface StyleSheetNode{
+    styles:StyleSheet
 }

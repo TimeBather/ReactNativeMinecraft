@@ -1,0 +1,1 @@
+export const require: (name: string) => any = globalThis.require;

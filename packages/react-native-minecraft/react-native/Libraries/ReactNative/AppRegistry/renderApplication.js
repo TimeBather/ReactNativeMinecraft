@@ -14,6 +14,7 @@ import AppContainer from './AppContainer';
 import invariant from 'fbjs/lib/invariant';
 import React from 'react';
 import {MinecraftGui} from "react-native-minecraft";
+import  {GuiContext} from "../../../../src/renderer/native/native";
 
 console.info("AppContainer",AppContainer);
 export type Application = {
@@ -25,7 +26,8 @@ export default function renderApplication<Props: Object>(
     WrapperComponent?: ?ComponentType<*>,
     callback?: () => void,
     options: {
-        initialProps: Props
+        initialProps: Props,
+        rootTag: GuiContext
     }
 ): Application {
     const { initialProps } = options;
@@ -37,7 +39,7 @@ export default function renderApplication<Props: Object>(
         >
             <RootComponent {...initialProps} />
         </AppContainer>,
-        minecraft.getGuiContainer()
+        options.rootTag
     );
 }
 
@@ -46,7 +48,6 @@ export function getApplication(
     initialProps: Object,
     WrapperComponent?: ?ComponentType<*>
 ): {| element: Node |} {
-    console.info("AppContainer",AppContainer);
     const element = (
         <AppContainer WrapperComponent={WrapperComponent} rootTag={{}}>
             <RootComponent {...initialProps} />

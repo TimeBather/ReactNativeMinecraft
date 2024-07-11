@@ -1,122 +1,77 @@
 import ReactReconciler, {HostConfig} from "react-reconciler";
-import {MinecraftNative, MinecraftNativeElement, MinecraftNativeGuiModule} from "./native";
 import _ from "lodash";
 import {connectDevtools} from "../../debugger";
-
-let currentContainer;
-
-function commitMouseEvents(element: MinecraftNativeElement, props: Record<string, any>){
-    Object.keys(props).forEach((propName)=>{
-        console.info(" - "+propName+" = "+ props[propName].toString())
-        switch (propName){
-            case 'onclick':
-                element.listenMouse(propName.substring(2),function (ctx){return props[propName](ctx)});
-        }
-    })
-}
+import {DomContext, DomNode, GuiContext} from "./native";
+import {ReactNode} from "react";
+import {getAttributeUpdatePayload, setInitialAttribute, updateAttribute} from "./attribute";
 
 const MinecraftNativeReconcilerConfig: Partial<HostConfig<
         any,
         Record<string, any>,
-        MinecraftNativeGuiModule,
-        MinecraftNativeElement,
-        MinecraftNativeElement,
+        DomContext,
+        DomNode,
+        DomNode,
         any, any, any, any, any, any, any, any>> = {
-    getRootHostContext(rootContainer: MinecraftNativeGuiModule) {
-
-    },
-    prepareForCommit(containerInfo: MinecraftNativeGuiModule) {
-        return null;
-    },
-    getChildHostContext(parentHostContext: any) {
-        return parentHostContext;
-    },
-    clearContainer() {
-
-    },
-    shouldSetTextContent() {
-        return false;
-    },
-    resetAfterCommit(containerInfo: MinecraftNativeGuiModule) {
-        // 在 commit 阶段后执行一次 renderAll 更新 canvas
-        // containerInfo.renderAll();
-    },
-    createInstance(type: string, props: Record<string, any>, rootContainer: MinecraftNativeGuiModule, hostContext: MinecraftNative, internalHandle: ReactReconciler.OpaqueHandle){
-        console.info("Creating instance of " + type + ",props:",props)
-        let serializedProp : Record<string, any> = {};
-        Object.keys(props).forEach(propName => {
-            switch (propName){
-                case 'children': break;
-                case 'onclick': break;
-                default:
-                    console.info(" - Copy prop " + propName + ", value = " , serializedProp , " to Native Host Serializer")
-                    serializedProp[propName] = props[propName];
-            }
-        });
-        console.info("Commit props:" ,JSON.stringify(serializedProp))
-        let element = rootContainer.createElement(type, JSON.stringify(serializedProp));
-        commitMouseEvents(element,props);
+    getRootHostContext(rootContainer: DomContext) {},
+    prepareForCommit(containerInfo: DomContext) {return null;},
+    getChildHostContext(parentHostContext: any) { return parentHostContext; },
+    clearContainer(node) {},
+    shouldSetTextContent() {return false;},
+    resetAfterCommit(containerInfo: DomContext) {},
+    createInstance(type: string, props: Record<string, any>, rootContainer: DomContext, hostContext: never, internalHandle: ReactReconciler.OpaqueHandle){
+        let element = rootContainer.createNode(type);
+        setInitialAttribute(element,props);
         return element;
     },
-    createTextInstance(text: any, rootContainer: MinecraftNativeGuiModule, hostContext: any, internalHandle: any) {
-        const element = rootContainer.createElement("text","{}");
-        element.setElementContent(text);
+    createTextInstance(text: any, rootContainer: DomContext, hostContext: any, internalHandle: any) {
+        const element = rootContainer.createNode("text");
+        element.setAttribute("content",text);
         return element;
     },
-    removeChildFromContainer(container: MinecraftNativeGuiModule, child: MinecraftNativeElement) {
-        container.removeElement(child);
+    removeChildFromContainer(container: DomContext, child: DomNode) {
+        container.getRootNode().removeChild(child);
     },
-    appendChildToContainer(container:MinecraftNativeGuiModule, child:MinecraftNativeElement){
-        console.info(`Append ${JSON.stringify(child)} to container!`);
-        container.appendElement(child);
+    appendChildToContainer(container:DomContext, child:DomNode){
+        container.getRootNode().addChild(child);
     },
 
-    appendInitialChild(parentInstance: MinecraftNativeElement, child: MinecraftNativeElement) {
+    appendInitialChild(parentInstance: DomNode, child: DomNode) {
         parentInstance.addChild(child);
     },
 
-    removeChild(parentInstance: MinecraftNativeElement, child: MinecraftNativeElement) {
+    removeChild(parentInstance: DomNode, child: DomNode) {
         parentInstance.removeChild(child);
     },
 
-    commitTextUpdate(element: MinecraftNativeElement, oldText: string, newText: string) {
-        element.setElementContent(newText);
+    commitTextUpdate(element: DomNode, oldText: string, newText: string) {
+        element.setAttribute("content", newText);
     },
 
-    commitUpdate(instance: MinecraftNativeElement,
+    commitUpdate(instance: DomNode,
                  updatePayload: any,
                  type: any,
                  prevProps: Record<string, any>,
                  nextProps: Record<string, any>,
                  internalHandle: ReactReconciler.OpaqueHandle
     ) {
-        console.info("Update payload: "+JSON.stringify(updatePayload)+" for instance "+ type)
-        commitMouseEvents(instance,updatePayload);
+        updateAttribute(instance,updatePayload);
     },
 
-    prepareUpdate(instance: any, type: any, oldProps: any, newProps: any) {
-        function diff(obj:Record<string, any>,base:Record<string, any>){
-           return  _.transform(obj,function(result,value,key){
-                if(key == "children")
-                    return;
-                if(!_.isEqual(value,base[key])){
-                    (result as any)[key] = (_.isObject(value) && _.isObject(base[key]) && (!_.isFunction(value)) ? diff(value,base[key]) : value)
-                }
-            })
-        }
-        let prePayload = diff(newProps,oldProps);
-        console.info("Update payload: "+JSON.stringify(prePayload)+" for instance "+ type)
-        return prePayload
+    prepareUpdate(instance: DomNode, type: any, oldProps: object, newProps: object) {
+        return getAttributeUpdatePayload(instance,oldProps,newProps);
     },
 
-    detachDeletedInstance() {
+    detachDeletedInstance(node: DomNode) {
 
     },
 
     finalizeInitialChildren(){
         return false;
     },
-    supportsMutation: true
+    supportsMutation: true,
+    appendChild(parentInstance: DomNode, child: DomNode) {
+        parentInstance.addChild(child);
+    }
 };
 
 export const ReactReconcilerInstance = ReactReconciler(MinecraftNativeReconcilerConfig as any);
@@ -124,7 +79,7 @@ export const ReactReconcilerInstance = ReactReconciler(MinecraftNativeReconciler
 connectDevtools(ReactReconcilerInstance);
 
 export const MinecraftGui = {
-    render(reactElement:any, container:MinecraftNativeGuiModule){
+    render(reactElement:ReactNode, container:GuiContext){
         let root = ReactReconcilerInstance.createContainer(
             container,
             0,
@@ -135,5 +90,12 @@ export const MinecraftGui = {
             ()=>{},
             null);
         ReactReconcilerInstance.updateContainer(reactElement,root);
+
+        return {
+            unmount:()=>{
+                ReactReconcilerInstance.updateContainer(null,root);
+            }
+        };
+
     }
 }

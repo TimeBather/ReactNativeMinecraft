@@ -1,14 +1,13 @@
-import './websocket'
 import type {ReactReconcilerInstance} from "../renderer";
 let connectToDevTools = (arg:object)=>null;
-if(minecraft.isDebugging()){
+if(__DEV__){
     connectToDevTools = require("react-devtools-core").connectToDevTools;
 }
 
 export function connectDevtools(reconciler: typeof ReactReconcilerInstance) {
-    if (connectToDevTools) {
+    if (connectToDevTools && __DEV__) {
         // @ts-ignore
-        console.info("Windows Devtools Hook:",Object.keys(window.__REACT_DEVTOOLS_GLOBAL_HOOK__));
+        // console.info("Windows Devtools Hook:",Object.keys(window.__REACT_DEVTOOLS_GLOBAL_HOOK__));
         connectToDevTools({
             host: "localhost",
             port: 8097,
