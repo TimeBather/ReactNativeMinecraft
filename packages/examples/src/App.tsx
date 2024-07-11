@@ -1,20 +1,23 @@
 import React from "react";
-
 import {View} from "react-native-minecraft";
 const useEditorTexture = {backgroundImage: 'resource("kasuga_lib:textures/gui/editor.png")'};
 
+
+const BackgroundImage = require("./editor.png");
 export default function App() {
     return <>
         <View style={{
             width: '100%',
             height: '100%',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            background:BackgroundImage
         }}>
             <View style={{
                 width: '400',
                 height: '200'
             }}>
+
                 <View style={{
                     positionType: 'absolute',
                     top: '24',
@@ -35,7 +38,7 @@ export default function App() {
                     backgroundUV: '0 0 800 400'
                 }}>
                     <View class="title" style={{justifyContent: "center", alignItems: 'center', height: '16'}}>
-                        编辑器2123
+                        编辑器
                     </View>
                     <View style={{ flexDirection:'row',height:'184'}}>
                         <View style={{width:'8.5',height:'100%'}}>
