@@ -2,8 +2,17 @@
   "name": "react-native-minecraft",
   "version": "0.1.0",
   "description": "Run react native in minecraft!",
+  "files": [
+    "dist",
+    "react-native"
+  ],
   "main": "dist/index.js",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "react-native",
+    "minecraft"
+  ],
   "rnpm": {
     "haste": {
       "providesModuleNodeModules": [
