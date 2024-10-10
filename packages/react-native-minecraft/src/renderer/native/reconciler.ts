@@ -1,5 +1,4 @@
 import ReactReconciler, {HostConfig} from "react-reconciler";
-import _ from "lodash";
 import {connectDevtools} from "../../debugger";
 import {DomContext, DomNode, GuiContext} from "./native";
 import {ReactNode} from "react";

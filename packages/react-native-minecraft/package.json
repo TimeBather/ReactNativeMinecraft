@@ -19,7 +19,6 @@
     "@types/react-dom": "^18.2.25",
     "@types/react-reconciler": "^0.28.8",
     "fbjs": "^3.0.5",
-    "lodash": "^4.17.21",
     "react": "^18.3.1",
     "react-reconciler": "^0.29.2",
     "rollup": "^4.17.2"
