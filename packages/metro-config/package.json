@@ -1,5 +1,9 @@
 {
   "name": "react-native-minecraft-metro-config",
   "version": "0.1.1",
-  "main": "./lib/index.js"
+  "main": "./lib/index.js",
+  "dependencies": {
+    "find-root": "^1.1.0",
+    "get-yarn-workspaces": "^1.0.2"
+  }
 }
