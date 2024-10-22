@@ -21,10 +21,11 @@ export interface DomContext<N extends DomNode = DomNode ,R extends N = DomNode>{
     getRootNode():R;
     createNode(name:string):N;
     createTextNode(name:string, content:string):N;
+    addEventListener(eventName: string, callback: Function): void;
+    removeEventListener(eventName: string, callback: Function): void;
 }
 
 export interface GuiContext extends DomContext<GuiDomNode, GuiDomNode>{
-
 }
 
 export interface StyleSheet{

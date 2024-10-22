@@ -1,7 +1,8 @@
 import ReactReconciler, {HostConfig} from "react-reconciler";
 import {connectDevtools} from "../../debugger";
 import {DomContext, DomNode, GuiContext} from "./native";
-import {ReactNode} from "react";
+import {createContext, ReactNode} from "react";
+import * as React from "react";
 import {getAttributeUpdatePayload, setInitialAttribute, updateAttribute} from "./attribute";
 
 const MinecraftNativeReconcilerConfig: Partial<HostConfig<
@@ -77,6 +78,8 @@ export const ReactReconcilerInstance = ReactReconciler(MinecraftNativeReconciler
 
 connectDevtools(ReactReconcilerInstance);
 
+const GuiContextProvider = createContext<GuiContext | null>(null);
+
 export const MinecraftGui = {
     render(reactElement:ReactNode, container:GuiContext){
         let root = ReactReconcilerInstance.createContainer(
@@ -88,7 +91,12 @@ export const MinecraftGui = {
             '',
             ()=>{},
             null);
-        ReactReconcilerInstance.updateContainer(reactElement,root);
+        ReactReconcilerInstance.updateContainer(
+            <>
+                <GuiContextProvider.Provider value={container}>
+                    { reactElement }
+                </GuiContextProvider.Provider>
+            </>,root);
 
         return {
             unmount:()=>{
@@ -97,4 +105,16 @@ export const MinecraftGui = {
         };
 
     }
+}
+
+export const useGuiContext : ()=>GuiContext = () => (React.useContext(GuiContextProvider)!);
+
+export const useContextEvent : (eventName:string, callback:Function) => void = (eventName, callback)=>{
+    const guiContext = useGuiContext();
+    React.useEffect(()=>{
+        guiContext.addEventListener(eventName,callback);
+        return ()=>{
+            guiContext.removeEventListener(eventName,callback);
+        }
+    },[eventName,callback]);
 }

@@ -2,7 +2,13 @@ import type {GuiContext} from "../renderer/native/native";
 import {MinecraftGui} from "../renderer";
 import {AppRegistry as ReactAppRegistry} from "react-native";
 
-const Registries : {getRegistry:(name:string)=>Registry} = globalThis.require("@kasugalib/registry");
+declare global{
+    export const __METRO_BOOTSTRAP_MODULE: {
+        require: (module:string)=>any;
+    };
+}
+
+const Registries : {getRegistry:(name:string)=>Registry} = __METRO_BOOTSTRAP_MODULE['require']("@kasugalib/registry");
 
 interface Registry{
     register(location:string,item:any):void;

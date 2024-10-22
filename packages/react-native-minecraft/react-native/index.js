@@ -1,6 +1,5 @@
 // @flow
 import './Libraries/Core/Polyfills'
-console.info("Loading React Native Instance")
 if(__DEV__){
     if(!global['hooked']){
         global['hooked'] = true;
@@ -13,18 +12,14 @@ if(__DEV__){
             if(devToolsHook[n]){
                 let originalHook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__[n];
                 window.__REACT_DEVTOOLS_GLOBAL_HOOK__[n] = function(...args){
-                    console.info("[RNative Call] "+ n+",args="+args.join(","))
-                    console.info("[RNative Call] Redirect to HMR "+ n+",args="+args.join(","))
                     let hmrResp = HmrHook[n].bind(HmrHook)(...args);
                     if( n === 'onScheduleFiberRoot' || n === 'onCommitFiberRoot'){
                         args[0] = fiberIdMap.get(args[0]);
                     }
-                    console.info("[RNative Call] Redirect to HMR "+ n+",args="+args.join(","))
                     let originalResp = originalHook.bind(devToolsHook)(...args);
                     if( n === 'inject' ){
                         fiberIdMap.set(hmrResp,originalResp);
                     }
-                    console.info("[RNative Call Response] "+ n+",args="+args.join(",")+',originResp='+originalResp+'hmrResp='+hmrResp)
                     return hmrResp;
                 }
             }else devToolsHook[n] = HmrHook[n];
