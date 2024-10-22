@@ -4,7 +4,9 @@
   "description": "Run react native in minecraft!",
   "files": [
     "dist",
-    "react-native"
+    "react-native",
+    "metro.config.js",
+    "react-native.config.js"
   ],
   "main": "dist/index.js",
   "license": "MIT",
