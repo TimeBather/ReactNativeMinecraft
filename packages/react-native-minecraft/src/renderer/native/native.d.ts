@@ -11,6 +11,8 @@ export interface DomNode{
     close(): void;
 
     hasFeature(featureName: string): boolean
+
+    addChildBefore(child: DomNode, beforeChild: DomNode): boolean;
 }
 
 export interface GuiDomNode extends DomNode{}

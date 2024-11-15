@@ -35,6 +35,10 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
         container.getRootNode().addChild(child);
     },
 
+    insertInContainerBefore(container: DomContext, child: DomNode, beforeChild: DomNode) {
+        container.getRootNode().addChildBefore(child, beforeChild);
+    },
+
     appendInitialChild(parentInstance: DomNode, child: DomNode) {
         parentInstance.addChild(child);
     },
@@ -71,6 +75,9 @@ const MinecraftNativeReconcilerConfig: Partial<HostConfig<
     supportsMutation: true,
     appendChild(parentInstance: DomNode, child: DomNode) {
         parentInstance.addChild(child);
+    },
+    insertBefore(parentInstance: DomNode, child: DomNode, beforeChild: DomNode) {
+        parentInstance.addChildBefore(child,beforeChild);
     }
 };
 
