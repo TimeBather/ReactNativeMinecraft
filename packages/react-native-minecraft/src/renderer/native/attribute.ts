@@ -96,7 +96,7 @@ export function updateAttribute(node:DomNode, payload:Record<string, {oldProp:an
         if(specialProcess){
             specialProcess.update(node,payload[key].oldProp,payload[key].newProp);
         }else{
-            node.setAttribute(key,payload[key].newProp);
+            node.setAttribute(key,String(payload[key].newProp));
         }
     }
 }
