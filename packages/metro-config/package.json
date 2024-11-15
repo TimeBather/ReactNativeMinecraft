@@ -1,6 +1,6 @@
 {
   "name": "react-native-minecraft-metro-config",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "./lib/index.js",
   "dependencies": {
     "find-workspaces": "^0.3.1"
