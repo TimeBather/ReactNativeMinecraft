@@ -1,13 +1,20 @@
-const findRoot = require("find-root");
-const getWorkspaces = require('get-yarn-workspaces');
+const findWorkspaces = require('find-workspaces');
 const path = require("path");
+
+function findRoot(cwd){
+    return findWorkspaces.findWorkspacesRoot(cwd).location;
+}
+
+function getWorkspaces(cwd){
+    return findWorkspaces.findWorkspaces(cwd).map(t=>t.location)
+}
 
 module.exports = function(projectPath) {
     const workspaces = getWorkspaces(projectPath);
     return {
         watchFolders: [
             ...workspaces,
-            path.resolve(projectPath, '../../node_modules')
+            path.resolve(findRoot(projectPath), 'node_modules')
         ],
         resolver:{
             blacklistRE: workspaces.map(
@@ -19,6 +26,7 @@ module.exports = function(projectPath) {
             // https://github.com/facebook/metro/issues/1#issuecomment-453450709
             extraNodeModules: new Proxy({}, {
                 get: (target, name) => {
+                    console.info(name, '->', path.join(findRoot(projectPath), `node_modules/${name}`))
                     return path.join(findRoot(projectPath), `node_modules/${name}`);
                 }
             })
