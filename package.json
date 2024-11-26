@@ -12,6 +12,8 @@
   "devDependencies": {
     "@kasugalib/core": "^0.0.2",
     "@kasugalib/menu": "^0.0.4",
-    "@kasugalib/nbt": "^0.0.3"
+    "@kasugalib/nbt": "^0.0.3",
+    "yakumo": "1.0.0-beta.18",
+    "yakumo-tsc": "1.0.0-beta.5"
   }
 }
