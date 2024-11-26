@@ -52,13 +52,14 @@ export class MenuStateManager extends MenuEntry{
         this.pendingUpdates = {}
     }
 
-    registerState<T>(path: string, initialValue: T): [T, StateUpdater<T>] {
+    registerState<T>(path: string, initialValue: T): [() => T, StateUpdater<T>] {
         this.states[path] = initialValue
+        const getter = () => this.states[path]
         const updater = (value: T) => {
             this.states[path] = value
             this.pendingUpdates[path] = value
         }
-        return [initialValue, updater]
+        return [getter, updater]
     }
 
     registerEmit(path: string, handler: EmitHandler) {
@@ -134,7 +135,7 @@ function withPath<T>(path: string, fn: () => T): T {
     return result
 }
 
-export function defineState<T>(initialValue: T, name?: string): [T, StateUpdater<T>] {
+export function defineState<T>(initialValue: T, name?: string): [() => T, StateUpdater<T>] {
     const path = name ? `${getCurrentPath()}.${name}` : getCurrentPath()
     return currentManager!.registerState(path, initialValue)
 }

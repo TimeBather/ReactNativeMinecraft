@@ -1,14 +1,13 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {createContext, useContext, useEffect, useState} from "react";
 import {useContextEvent, useGuiContext} from "../renderer";
 import {Channel, ChannelHandler} from "@kasugalib/menu";
 import type {CompoundTagWrapper} from "@kasugalib/nbt";
 import type * as NBT from "@kasugalib/nbt";
 import {MapSet} from "../structures";
-import {update} from "lodash";
 import {GuiContext} from "../renderer/native/native";
 
-const ChannelIdentifier = createContext("root");
+const ChannelIdentifier = createContext("");
 const ChannelHandlerIdentifier = createContext<MenuChannelReceiveHandler|null>(null);
 
 
@@ -20,7 +19,7 @@ export function MenuChannelComponent(props: {
     children: any
 }){
     const currentIdentifier = useContext(ChannelIdentifier);
-    return <ChannelIdentifier.Provider value={currentIdentifier + '.' + props.id}>
+    return <ChannelIdentifier.Provider value={currentIdentifier ? currentIdentifier + '.' + props.id : props.id}>
         {props.children}
     </ChannelIdentifier.Provider>
 }
@@ -33,8 +32,10 @@ export class MenuChannelReceiveHandler {
     guiContext?:GuiContext
     $messageHook: (event:any)=>void = ()=>console.error("Menu Channel Receiver Not Ready!");
     init(guiContext:GuiContext, readyHook:()=>void){
+        console.info("MCR Init")
         this.guiContext = guiContext;
         this.$messageHook = (event:any)=>{
+            console.info("MCR RX")
             readyHook();
             this.receive(event.getValue());
         };
@@ -75,7 +76,7 @@ export class MenuChannelReceiveHandler {
 
     sendMessage(message: CompoundTagWrapper){
         this.guiContext!
-            .getContextModuleNative<MenuModule>("menu")
+            .getContextModule<MenuModule>("menu")
             .getChannel()
             .sendMessage(message)
     }
@@ -88,19 +89,25 @@ export class MenuChannelReceiveHandler {
             if (typeof data === 'object' && data !== null) {
                 this.update(data, currentPath)
             } else {
-                this.dataCache[currentPath] = data
-                this.receiveHandler.notify(currentPath, (update) => update(data))
+                this.dataCache[currentPath] = data;
+                this.receiveHandler.notify(currentPath, (update) => update(data));
             }
         }
     }
 }
 
 export function MenuChannelReceiver(props:{children:any}){
-    const handler = new MenuChannelReceiveHandler();
-    const guiContext = useGuiContext();
     const [ready, setReady] = useState(false);
-    handler.init(guiContext, ()=>setReady(true));
-    useContextEvent("message", (...args)=>handler.$messageHook(...args));
+    const [handler, setHandler] = useState<MenuChannelReceiveHandler|null>(null);
+    const guiContext = useGuiContext();
+    
+    useEffect(() => {
+        const handler = new MenuChannelReceiveHandler();
+        setHandler(handler);
+        handler.init(guiContext, ()=>setReady(true));
+    }, [guiContext]);
+    
+    useContextEvent("message", (e:any)=>handler?.$messageHook(e));
 
     return <>
         <ChannelHandlerIdentifier.Provider value={handler}> {ready ? props.children : null} </ChannelHandlerIdentifier.Provider>
@@ -113,8 +120,8 @@ export function useData(id:string){
     if(receiver == null){
         throw new Error("Receiver is null");
     }
-    const finalId = currentIdentifier + id;
-    return receiver.get(id);
+    const finalId = currentIdentifier + "." + id;
+    return receiver.get(finalId);
 }
 
 
