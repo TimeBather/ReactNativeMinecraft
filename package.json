@@ -8,5 +8,10 @@
   "workspaces": [
     "packages/*"
   ],
-  "packageManager": "yarn@3.6.4"
+  "packageManager": "yarn@3.6.4",
+  "devDependencies": {
+    "@kasugalib/core": "^0.0.2",
+    "@kasugalib/menu": "^0.0.4",
+    "@kasugalib/nbt": "^0.0.3"
+  }
 }

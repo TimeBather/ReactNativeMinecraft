@@ -28,6 +28,7 @@ export interface DomContext<N extends DomNode = DomNode ,R extends N = DomNode>{
 }
 
 export interface GuiContext extends DomContext<GuiDomNode, GuiDomNode>{
+    getContextModuleNative<T>(name:string):T;
 }
 
 export interface StyleSheet{

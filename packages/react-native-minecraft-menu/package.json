@@ -1,0 +1,14 @@
+{
+  "name": "react-native-minecraft-menu",
+  "description": "Menu Server for React Native Minecraft",
+  "version": "0.0.2",
+  "keywords": [
+    "minecraft",
+    "kasuga"
+  ],
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts"
+}
