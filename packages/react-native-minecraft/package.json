@@ -1,6 +1,6 @@
 {
   "name": "react-native-minecraft",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Run react native in minecraft!",
   "files": [
     "dist",
