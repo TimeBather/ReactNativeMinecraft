@@ -9,7 +9,7 @@ if(__DEV__){
     client.send(
         JSON.stringify({
             type: 'register-entrypoints',
-            entryPoints: [`ws://${globalThis['HMRServer'] ?? "127.0.0.1:8081"}/hot?bundleEntry=${globalThis['HMREntry'] ?? "client/index.bundle"}&platform=minecraft`],
+            entryPoints: [`ws://${globalThis['HMRServer' as keyof typeof globalThis] ?? "127.0.0.1:8081"}/hot?bundleEntry=${globalThis['HMREntry' as keyof typeof globalThis] ?? "client/index.bundle"}&platform=minecraft`],
         }),
     );
 }
