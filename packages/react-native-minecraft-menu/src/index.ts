@@ -145,6 +145,6 @@ export function defineEmit(handler: EmitHandler, name?: string): EmitHandler {
     return currentManager!.registerEmit(path, handler)
 }
 
-export function defineGroup(name: string, setup: () => GroupDefinition) {
+export function defineGroup<T extends GroupDefinition>(name: string, setup: () => T) : T {
     return withPath(name, setup)
 }

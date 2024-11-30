@@ -59,6 +59,7 @@ export class MenuChannelReceiveHandler {
     get(id:string){
         const [data, setData] = useState(this.dataCache[id]);
         useEffect(()=>{
+            setData(this.dataCache[id]);
             this.receiveHandler.add(id, setData);
             return ()=>{
                 this.receiveHandler.remove(id, setData);
@@ -131,7 +132,7 @@ export function useEmits(id:string){
     if(receiver == null){
         throw new Error("Receiver is null");
     }
-    const finalId = currentIdentifier + id;
+    const finalId = currentIdentifier + "." + id;
     return (...args:any[])=>receiver.emit(finalId, ...args);
 }
 
