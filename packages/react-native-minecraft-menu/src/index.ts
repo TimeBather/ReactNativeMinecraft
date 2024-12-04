@@ -16,6 +16,7 @@ export class MenuStateManager extends MenuEntry{
     private pendingUpdates: Record<string, any> = {}
     private updateTimer: any
     private readonly UPDATE_INTERVAL = 50 // 50ms
+    private effects: Array<() => void> = []
 
     constructor(handle: MenuHandle) {
         super(handle)
@@ -121,6 +122,15 @@ export class MenuStateManager extends MenuEntry{
             clearInterval(this.updateTimer)
             this.updateTimer = null
         }
+        this.effects.forEach(cleanup => cleanup())
+        this.effects = []
+    }
+
+    registerEffect(effect: () => (() => void)) {
+        const cleanup = effect()
+        if (typeof cleanup === 'function') {
+            this.effects.push(cleanup)
+        }
     }
 }
 
@@ -136,15 +146,31 @@ function withPath<T>(path: string, fn: () => T): T {
 }
 
 export function defineState<T>(initialValue: T, name?: string): [() => T, StateUpdater<T>] {
+    if (!currentManager) {
+        throw new Error('defineState must be called within a menu definition')
+    }
     const path = name ? `${getCurrentPath()}.${name}` : getCurrentPath()
     return currentManager!.registerState(path, initialValue)
 }
 
 export function defineEmit(handler: EmitHandler, name?: string): EmitHandler {
+    if (!currentManager) {
+        throw new Error('defineEmit must be called within a menu definition')
+    }
     const path = name ? `${getCurrentPath()}.${name}` : getCurrentPath()
     return currentManager!.registerEmit(path, handler)
 }
 
 export function defineGroup<T extends GroupDefinition>(name: string, setup: () => T) : T {
+    if (!currentManager) {
+        throw new Error('defineGroup must be called within a menu definition')
+    }
     return withPath(name, setup)
+}
+
+export function defineEffect(effect: () => (() => void)) {
+    if (!currentManager) {
+        throw new Error('defineEffect must be called within a menu definition')
+    }
+    currentManager.registerEffect(effect)
 }
